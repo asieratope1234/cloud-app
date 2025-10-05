@@ -1,30 +1,58 @@
 const express = require('express');
-const app = express();
-const PORT = 3000;
+const mongoose = require('mongoose');
+const basicAuth = require('express-basic-auth');
 
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
 app.use(express.json());
 
-let tasks = []; // lista de tareas
+// Autenticación básica para /tasks
+app.use('/tasks', basicAuth({
+    users: { 'asier': 'Lliurex-1234' }, // usuario/contraseña
+    challenge: true
+}));
 
-// Obtener todas las tareas
-app.get('/tasks', (req, res) => {
+// Conectar a MongoDB usando la variable de entorno
+mongoose.connect(process.env.MONGODB_URI, {
+  // No necesitas estas opciones con Node 4+ 
+})
+.then(() => console.log('Conectado a MongoDB Atlas'))
+.catch(err => console.log('Error de conexión:', err));
+
+// Esquema y modelo
+const taskSchema = new mongoose.Schema({
+  text: String
+});
+const Task = mongoose.model('Task', taskSchema);
+
+// Ruta principal
+app.get('/', (req, res) => {
+  res.send('¡Bienvenido a la app de tareas! Visita /tasks para ver las tareas.');
+});
+
+// Obtener tareas
+app.get('/tasks', async (req, res) => {
+  const tasks = await Task.find();
   res.json(tasks);
 });
 
-// Añadir una tarea
-app.post('/tasks', (req, res) => {
-  const task = { id: tasks.length + 1, text: req.body.text };
-  tasks.push(task);
+// Añadir tarea
+app.post('/tasks', async (req, res) => {
+  const task = new Task({ text: req.body.text });
+  await task.save();
   res.json(task);
 });
 
-// Eliminar una tarea
-app.delete('/tasks/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  tasks = tasks.filter(t => t.id !== id);
+// Eliminar tarea
+app.delete('/tasks/:id', async (req, res) => {
+  await Task.findByIdAndDelete(req.params.id);
   res.json({ message: 'Tarea eliminada' });
 });
 
+// Iniciar servidor
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
+
