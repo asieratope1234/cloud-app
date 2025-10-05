@@ -1,15 +1,19 @@
 {
   "name": "cloud-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Aplicación de tareas con Express, MongoDB Atlas y autenticación básica",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Asier Ferri Sanchis",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^7.6.0",
+    "express-basic-auth": "^1.2.0"
   }
 }
+
