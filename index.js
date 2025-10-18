@@ -6,29 +6,26 @@ const app = express();
 
 // Middleware para servir archivos estáticos
 app.use(express.static('public'));
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// Middleware JSON
-app.use(express.json());
-
 // Autenticación básica
 app.use('/tasks', basicAuth({
-    users: { 'asier': 'Lliurex-1234' },
+    users: { 'Asier': 'Lliurex-1234' },
     challenge: true
 }));
 
-// MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Conectado a MongoDB Atlas'))
-  .catch(err => console.log('Error de conexión:', err));
+// Conexión a MongoDB
+mongoose.connect('mongodb+srv://Asier:Lliurex-1234@clusterasier.erye9hk.mongodb.net/?retryWrites=true&w=majority&appName=ClusterAsier')
+.then(() => console.log('Conectado a MongoDB Atlas'))
+.catch(err => console.log('Error de conexión:', err));
+
 // Esquema y modelo
-const taskSchema = new mongoose.Schema({
-  text: String
-});
+const taskSchema = new mongoose.Schema({ text: String });
 const Task = mongoose.model('Task', taskSchema);
 
-// Ruta principal
+// Rutas
 app.get('/', (req, res) => {
   res.send(`
     <html>
@@ -43,27 +40,34 @@ app.get('/', (req, res) => {
   `);
 });
 
-// Obtener tareas
 app.get('/tasks', async (req, res) => {
-  const tasks = await Task.find();
-  res.json(tasks);
+  try {
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: 'No se pudieron cargar las tareas' });
+  }
 });
 
-// Añadir tarea
 app.post('/tasks', async (req, res) => {
-  const task = new Task({ text: req.body.text });
-  await task.save();
-  res.json(task);
+  try {
+    const task = new Task({ text: req.body.text });
+    await task.save();
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: 'No se pudo crear la tarea' });
+  }
 });
 
-// Eliminar tarea
 app.delete('/tasks/:id', async (req, res) => {
-  await Task.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Tarea eliminada' });
+  try {
+    await Task.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Tarea eliminada' });
+  } catch (err) {
+    res.status(500).json({ error: 'No se pudo eliminar la tarea' });
+  }
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor escuchando en http://0.0.0.0:${PORT}`);
 });
-
