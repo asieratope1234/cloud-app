@@ -3,38 +3,14 @@ const mongoose = require('mongoose');
 const basicAuth = require('express-basic-auth');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
-// Middleware
 app.use(express.json());
 
-// Autenticación básica para /tasks
-app.use('/tasks', basicAuth({
-    users: { 'asier': 'Lliurex-1234' }, // usuario/contraseña
-    challenge: true
-}));
+let tasks = []; // lista de tareas
 
-// Conectar a MongoDB usando la variable de entorno
-mongoose.connect(process.env.MONGODB_URI, {
-  // No necesitas estas opciones con Node 4+ 
-})
-.then(() => console.log('Conectado a MongoDB Atlas'))
-.catch(err => console.log('Error de conexión:', err));
-
-// Esquema y modelo
-const taskSchema = new mongoose.Schema({
-  text: String
-});
-const Task = mongoose.model('Task', taskSchema);
-
-// Ruta principal
-app.get('/', (req, res) => {
-  res.send('¡Bienvenido a la app de tareas! Visita /tasks para ver las tareas.');
-});
-
-// Obtener tareas
-app.get('/tasks', async (req, res) => {
-  const tasks = await Task.find();
+// Obtener todas las tareas
+app.get('/tasks', (req, res) => {
   res.json(tasks);
 });
 
