@@ -1,85 +1,228 @@
+/* --- Variables CSS para mantener consistencia --- */
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --success-color: #4caf50;
+  --success-hover: #45a049;
+  --danger-color: #ff4d4f;
+  --danger-hover: #ff7875;
+  --bg-gradient-start: #f8f9ff;
+  --bg-gradient-end: #e0e7ff;
+  --card-bg: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-radius: 12px;
+  --shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.12);
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Reset básico mejorado --- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: linear-gradient(120deg, #1e293b, #0f172a);
-  color: #f8fafc;
+  font-family: var(--font-main);
+  background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 100vh;
+  justify-content: flex-start;
+  padding: 24px;
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
-.container {
-  background: rgba(255, 255, 255, 0.06);
-  padding: 40px;
-  border-radius: 16px;
+/* --- Cabecera --- */
+header {
+  width: 100%;
+  max-width: 600px;
   text-align: center;
-  width: 380px;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  margin-bottom: 32px;
+  padding: 0 8px;
 }
 
-h1 {
-  margin-bottom: 22px;
-  font-size: 26px;
-  font-weight: 600;
-  color: #e2e8f0;
+header h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
 }
 
-input {
+header p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* --- Contenedor de tareas --- */
+.tasks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  padding: 12px;
-  margin: 10px 0 18px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  outline: none;
-  background: rgba(255, 255, 255, 0.85);
+  max-width: 600px;
+  padding: 0 4px;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  font-size: 17px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-button:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-}
-
-.file-list {
-  text-align: left;
-  margin-top: 22px;
-}
-
-.file-item {
-  background: rgba(255, 255, 255, 0.10);
-  padding: 12px;
-  border-radius: 6px;
-  margin: 10px 0;
-  font-size: 14px;
+/* --- Tarjetas de tareas --- */
+.task {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: fadeIn 0.4s ease-out;
 }
 
-.file-item a {
-  color: #93c5fd;
-  text-decoration: none;
+.task:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
-.file-item a:hover {
-  text-decoration: underline;
+.task p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-word;
+  max-width: 80%;
+}
+
+/* --- Botón de eliminar --- */
+.task button {
+  background-color: var(--danger-color);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task button:hover {
+  background-color: var(--danger-hover);
+  transform: scale(1.05);
+}
+
+.task button:focus {
+  outline: 2px solid var(--danger-hover);
+  outline-offset: 2px;
+}
+
+/* --- Formulario para nueva tarea --- */
+form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 600px;
+  padding: 0 4px;
+}
+
+form input[type="text"] {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: var(--border-radius);
+  border: 2px solid #e0e0e0;
+  font-size: 1rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+form input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+form button {
+  padding: 12px 20px;
+  border-radius: var(--border-radius);
+  border: none;
+  background-color: var(--success-color);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.15s ease;
+}
+
+form button:hover {
+  background-color: var(--success-hover);
+  transform: translateY(-1px);
+}
+
+form button:focus {
+  outline: 2px solid var(--success-hover);
+  outline-offset: 2px;
+}
+
+/* --- Mensaje vacío --- */
+.empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 1.1rem;
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* --- Animación de entrada --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Responsive: ajuste para móviles pequeños --- */
+@media (max-width: 600px) {
+  body {
+    padding: 16px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .task {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .task p {
+    max-width: 100%;
+  }
+
+  form {
+    flex-direction: column;
+  }
+
+  form button {
+    padding: 12px;
+    width: 100%;
+  }
 }
